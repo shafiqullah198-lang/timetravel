@@ -29,6 +29,7 @@
                 radial-gradient(900px 380px at -8% 108%, rgba(168, 85, 247, 0.24), transparent 55%),
                 linear-gradient(135deg, var(--bg-start), var(--bg-end));
             position: relative;
+            overflow-x: hidden;
         }
 
         body::before {
@@ -139,6 +140,7 @@
             border-radius: 16px;
             backdrop-filter: blur(4px);
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+            flex-wrap: wrap;
         }
 
         .erp-header h1 {
@@ -282,6 +284,28 @@
         .erp-btn-primary:hover {
             filter: brightness(1.05);
         }
+
+        @media (max-width: 640px) {
+            .brand-strip {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .brand-strip .logo-shell {
+                width: 52px;
+                height: 52px;
+            }
+
+            .erp-header {
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .public-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -318,12 +342,12 @@
                 </div>
                 <div class="text-xl md:text-3xl font-bold tracking-wide">TIME TRAVEL &amp; TOUR</div>
             </div>
-            <header class="erp-header px-5 py-4 mb-6 flex items-center justify-between">
+            <header class="erp-header px-5 py-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                     <h1 class="text-2xl font-semibold">{% block page_title %}ERP Dashboard{% endblock %}</h1>
                     <p class="text-sm text-slate-500">{% block page_subtitle %}Financial and booking control center{% endblock %}</p>
                 </div>
-                <a href="{% url 'public_home' %}" class="public-btn px-4 py-2 text-white text-sm">Public Website</a>
+                <a href="{% url 'public_home' %}" class="public-btn px-4 py-2 text-white text-sm w-full sm:w-auto text-center">Public Website</a>
             </header>
 
             {% if messages %}
