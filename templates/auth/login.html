@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-sky-600 via-blue-900 to-slate-950 flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white/95 rounded-2xl shadow-2xl border border-white/40 overflow-hidden">
+        <div class="bg-slate-900 text-white p-6">
+            <h1 class="text-2xl font-bold tracking-wide">Travel Agency ERP</h1>
+            <p class="text-sm text-slate-300 mt-1">Internal access for Admin, Accountant, and Staff</p>
+        </div>
+
+        <form method="post" class="p-6 space-y-4">
+            {% csrf_token %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="text-sm rounded-lg p-3 bg-red-100 text-red-700">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Username</label>
+                <input name="username" required class="w-full rounded-lg border border-slate-300 px-3 py-2">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                <input type="password" name="password" required class="w-full rounded-lg border border-slate-300 px-3 py-2">
+            </div>
+            <button class="w-full bg-blue-600 hover:bg-blue-500 text-white rounded-lg py-2 font-semibold">Log In</button>
+            <a href="{% url 'public_home' %}" class="block w-full text-center border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-lg py-2 font-semibold">Go to Public Website</a>
+        </form>
+    </div>
+</body>
+</html>

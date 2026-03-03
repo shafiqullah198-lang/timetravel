@@ -1,0 +1,66 @@
+{% extends "erp/base.html" %}
+{% block title %}Customer Ledger | Travel ERP{% endblock %}
+{% block page_title %}Customer Ledger{% endblock %}
+{% block page_subtitle %}{{ customer.name }} | Remaining PKR {{ customer.remaining_amount }}{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
+    <div class="erp-panel p-4">
+        <div class="erp-stat-label">Total Purchased</div>
+        <div class="text-xl font-bold erp-stat-value">{{ customer.total_amount }}</div>
+    </div>
+    <div class="erp-panel p-4">
+        <div class="erp-stat-label">Total Paid</div>
+        <div class="text-xl font-bold text-emerald-600">{{ customer.total_paid }}</div>
+    </div>
+    <div class="erp-panel p-4">
+        <div class="erp-stat-label">Remaining (Udar)</div>
+        <div class="text-xl font-bold text-red-600">{{ customer.remaining_amount }}</div>
+    </div>
+</div>
+
+<div class="erp-panel p-4 mb-5">
+    <h3 class="font-semibold mb-3 text-violet-100">Add Payment</h3>
+    <form method="post" action="{% url 'add_customer_payment' customer.id %}" class="grid grid-cols-1 md:grid-cols-4 gap-3">
+        {% csrf_token %}
+        <input name="amount" type="number" step="0.01" placeholder="Amount" required class="erp-input px-3 py-2">
+        <select name="payment_mode" class="erp-input px-3 py-2">
+            <option value="cash">Cash</option>
+            <option value="bank">Bank</option>
+            <option value="card">Card</option>
+            <option value="jazzcash">JazzCash</option>
+            <option value="easypaisa">Easypaisa</option>
+            <option value="online">Online</option>
+        </select>
+        <input name="reference_no" placeholder="Reference #" class="erp-input px-3 py-2">
+        <button class="bg-blue-600 hover:bg-blue-500 text-white rounded-lg px-4 py-2">Add Payment</button>
+    </form>
+</div>
+
+<div class="erp-table-wrap">
+    <table class="w-full text-sm">
+        <thead class="erp-table">
+            <tr>
+                <th class="text-left p-3">Description</th>
+                <th class="text-right p-3">Debit</th>
+                <th class="text-right p-3">Credit</th>
+                <th class="text-left p-3">Payment Mode</th>
+                <th class="text-left p-3">Date</th>
+            </tr>
+        </thead>
+        <tbody class="erp-table">
+            {% for e in entries %}
+            <tr>
+                <td class="p-3">{{ e.description }}</td>
+                <td class="p-3 text-right erp-table-debit">{{ e.debit }}</td>
+                <td class="p-3 text-right erp-table-credit">{{ e.credit }}</td>
+                <td class="p-3 erp-table-muted">{{ e.payment_mode }}</td>
+                <td class="p-3 erp-table-muted">{{ e.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="p-5 text-center erp-table-muted">No ledger entries found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

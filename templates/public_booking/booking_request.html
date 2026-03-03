@@ -1,0 +1,230 @@
+{% extends "includes/base.html" %}
+{% block content %}
+<style>
+.booking-wrap{
+    max-width:760px;
+    margin:24px auto;
+    background:#d6dbe4;
+    border:1px solid #b8c1d0;
+    border-radius:10px;
+    padding:18px;
+}
+.booking-title{
+    font-size:22px;
+    font-weight:700;
+    color:#0f2f63;
+    margin-bottom:10px;
+}
+.flight-summary{
+    background:#edf1f7;
+    border:1px solid #c7d0de;
+    border-radius:8px;
+    padding:12px;
+    margin-bottom:14px;
+    color:#22324a;
+    font-size:14px;
+}
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+.field label{
+    font-size:12px;
+    color:#243752;
+}
+.field input{
+    border:1px solid #aeb8c8;
+    border-radius:6px;
+    padding:9px 10px;
+    background:#f6f8fc;
+    color:#1f2a3c;
+}
+.actions{
+    margin-top:14px;
+}
+.book-btn{
+    width:100%;
+    border:0;
+    background:#0a4e97;
+    color:white;
+    border-radius:6px;
+    padding:10px 12px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+}
+.success-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(3, 14, 31, 0.58);
+    backdrop-filter: blur(3px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+    z-index:1200;
+}
+.success-overlay.show{
+    display:flex;
+}
+.success-modal{
+    width:min(92vw, 560px);
+    background:linear-gradient(145deg, #0f2b52, #123968);
+    border:1px solid rgba(141, 190, 247, 0.45);
+    border-radius:14px;
+    color:#eaf3ff;
+    box-shadow:0 20px 55px rgba(3, 11, 24, 0.55);
+    padding:20px;
+}
+.success-title{
+    margin:0 0 10px;
+    font-size:24px;
+    font-weight:700;
+}
+.success-text{
+    margin:0 0 12px;
+    font-size:14px;
+    color:#d9e8ff;
+}
+.success-details{
+    margin:0;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid rgba(142, 189, 245, 0.4);
+    background:rgba(255,255,255,0.07);
+    font-size:13px;
+    line-height:1.45;
+}
+.success-actions{
+    margin-top:14px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+.btn-success-action{
+    border:0;
+    border-radius:999px;
+    padding:10px 16px;
+    color:#ffffff;
+    font-weight:600;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    cursor:pointer;
+}
+.btn-wa{
+    background:#16a34a;
+}
+.btn-close{
+    background:#2563eb;
+}
+@media (max-width: 768px) {
+    .grid{ grid-template-columns:1fr; }
+}
+</style>
+
+<div class="booking-wrap">
+    <div class="booking-title">Flight Booking Request</div>
+
+    {% if success %}
+    <div class="flight-summary">
+        Booking request saved successfully. Reference: <strong>{{ booking.pnr }}</strong>
+    </div>
+    <div id="bookingSuccessOverlay" class="success-overlay show" role="dialog" aria-modal="true" aria-labelledby="bookingSuccessTitle">
+        <div class="success-modal">
+            <h2 id="bookingSuccessTitle" class="success-title">Request Submitted</h2>
+            <p class="success-text">Your details were shared with our team. We will contact you shortly.</p>
+            <div class="success-details">
+                <div><strong>Reference:</strong> {{ booking.pnr }}</div>
+                <div><strong>Customer:</strong> {{ booking.full_name }} ({{ booking.phone }})</div>
+                <div><strong>Route:</strong> {{ booking.from_city }} -> {{ booking.to_city }}</div>
+                <div><strong>Date:</strong> {{ booking.departure_date }}</div>
+                <div><strong>Flight:</strong> {{ booking.airline }}</div>
+            </div>
+            <div class="success-actions">
+                <a class="btn-success-action btn-wa" href="{{ wa_url }}" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-whatsapp"></i> Notify Admin on WhatsApp
+                </a>
+                <button type="button" class="btn-success-action btn-close" onclick="closeBookingSuccessModal()">Close</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function closeBookingSuccessModal() {
+            const modal = document.getElementById("bookingSuccessOverlay");
+            if (modal) modal.classList.remove("show");
+        }
+
+        window.addEventListener("load", function () {
+            const waUrl = "{{ wa_url|escapejs }}";
+            if (waUrl) {
+                window.open(waUrl, "_blank", "noopener,noreferrer");
+            }
+        });
+    </script>
+    {% else %}
+    <div class="flight-summary">
+        <div><strong>Route:</strong> {{ from_city }} -> {{ to_city }}</div>
+        <div><strong>Date:</strong> {{ departure_date }}</div>
+        <div><strong>Flight:</strong> {{ airline }}</div>
+        <div><strong>Time:</strong> {{ departure_time }} -> {{ arrival_time }} ({{ stop_label }})</div>
+        <div><strong>Fare:</strong> {{ fare_type }} | <strong>Price:</strong> PKR {{ price }}</div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="from_city" value="{{ from_city }}">
+        <input type="hidden" name="to_city" value="{{ to_city }}">
+        <input type="hidden" name="departure_date" value="{{ departure_date }}">
+        <input type="hidden" name="airline" value="{{ airline }}">
+        <input type="hidden" name="fare_type" value="{{ fare_type }}">
+        <input type="hidden" name="price" value="{{ price }}">
+        <input type="hidden" name="departure_time" value="{{ departure_time }}">
+        <input type="hidden" name="arrival_time" value="{{ arrival_time }}">
+        <input type="hidden" name="stop_label" value="{{ stop_label }}">
+
+        <div class="grid">
+            <div class="field">
+                <label>Full Name</label>
+                <input type="text" name="full_name" required>
+            </div>
+            <div class="field">
+                <label>Phone</label>
+                <input type="text" name="phone" required>
+            </div>
+            <div class="field">
+                <label>Email</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="field">
+                <label>Passport Number</label>
+                <input type="text" name="passport_number" required>
+            </div>
+            <div class="field">
+                <label>Passport Expiry</label>
+                <input type="date" name="passport_expiry" required>
+            </div>
+            <div class="field">
+                <label>Nationality</label>
+                <input type="text" name="nationality" required>
+            </div>
+            <div class="field">
+                <label>Date of Birth</label>
+                <input type="date" name="date_of_birth" required>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="book-btn">Book Now</button>
+        </div>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

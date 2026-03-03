@@ -1,0 +1,1189 @@
+{% extends "includes/base.html" %}
+{% load humanize %}
+{% block content %}
+
+<style>
+
+/* =======================
+   MOBILE PREMIUM THEME
+======================= */
+
+body{
+    background: linear-gradient(180deg,#0b1220,#0f172a);
+    font-family: 'Inter', sans-serif;
+}
+
+/* =======================
+   MAIN CONTAINER
+======================= */
+
+.results-container{
+    width: min(980px, calc(100% - 320px));
+    margin-left: 40px;
+    margin-right: auto;
+    padding: 15px;
+}
+
+/* =======================
+   STICKY DATE SLIDER
+======================= */
+
+.date-slider{
+    display:flex;
+    gap:12px;
+    overflow-x:auto;
+    padding-bottom:10px;
+    margin-bottom:20px;
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:#0f172a;
+}
+
+.date-slider::-webkit-scrollbar{
+    display:none;
+}
+
+.date-card{
+    min-width:110px;
+    padding:10px;
+    border-radius:14px;
+    background:linear-gradient(145deg,#1e293b,#0f172a);
+    text-align:center;
+    cursor:pointer;
+    border:1px solid rgba(255,255,255,0.05);
+    transition:0.3s ease;
+    position:relative;
+}
+
+.date-card.active{
+    background:linear-gradient(135deg,#2563eb,#1e40af);
+    box-shadow:0 0 20px rgba(37,99,235,0.6);
+}
+
+.date-day{
+    font-size:12px;
+    color:white;
+}
+
+.date-price{
+    font-size:12px;
+    color:#22c55e;
+}
+
+.cheapest-badge{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+    background:#22c55e;
+    color:white;
+    font-size:9px;
+    padding:2px 6px;
+    border-radius:10px;
+}
+
+/* =======================
+   SECTION TITLE
+======================= */
+
+.section-title{
+    color:white;
+    font-size:18px;
+    font-weight:600;
+    margin:15px 5px;
+}
+
+/* =======================
+   COMPACT FLIGHT CARD
+======================= */
+
+.flight-card{
+    background:linear-gradient(135deg,#0d2f6b,#123f84);
+    border-radius:10px;
+    padding:0;
+    margin-bottom:14px;
+    border:1px solid #d7dce5;
+    transition:0.3s ease;
+    overflow:hidden;
+}
+
+.flight-card:hover{
+    box-shadow:0 4px 20px rgba(15,23,42,0.08);
+}
+
+.flight-shell{
+    display:flex;
+    min-height:126px;
+}
+
+.flight-left{
+    flex:1;
+    padding:18px 20px 14px;
+}
+
+.flight-right{
+    width:238px;
+    border-left:1px solid rgba(255,255,255,0.2);
+    padding:18px 14px 14px;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    justify-content:space-between;
+}
+
+.flight-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+}
+
+.time-block{
+    min-width:140px;
+}
+
+.time{
+    color:#ffffff;
+    font-size:16px;
+    line-height:1;
+    font-weight:700;
+}
+
+.airport{
+    font-size:10px;
+    color:#dbe8ff;
+    margin-top:4px;
+    line-height:1.2;
+}
+
+.plus-day{
+    color:#0f5cb5;
+    font-size:10px;
+    vertical-align:top;
+    margin-left:3px;
+    font-weight:700;
+}
+
+.duration-pill{
+    background:rgba(255,255,255,0.16);
+    color:#ffffff;
+    font-size:10px;
+    padding:4px 8px;
+    border-radius:8px;
+    font-weight:500;
+    margin-top:2px;
+}
+
+.route-row{
+    margin-top:8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:#e8f1ff;
+    font-size:12px;
+}
+
+.stop-link{
+    color:#8ed0ff;
+    text-decoration:underline;
+    cursor:pointer;
+}
+
+.airline-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:7px;
+    color:#f3f7ff;
+    font-size:11px;
+    font-weight:500;
+}
+
+.flight-meta{
+    margin-top:5px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#cddcff;
+    font-size:10px;
+}
+
+.flight-code{
+    color:#b8cfff;
+}
+
+.meal-meta{
+    display:flex;
+    align-items:center;
+    gap:4px;
+}
+
+.logo{
+    height:18px;
+    width:auto;
+}
+
+.save-badge{
+    background:#eaf9e8;
+    color:#2f7d32;
+    border:1px solid #8bc98f;
+    font-size:11px;
+    border-radius:4px;
+    padding:3px 10px;
+}
+
+.price-btn{
+    width:100%;
+    border:0;
+    border-radius:4px;
+    padding:11px 10px;
+    background:#0a4e97;
+    color:white;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+}
+.price-btn:hover{
+    opacity:.92;
+}
+
+.price-btn.active{
+    box-shadow:inset 0 0 0 2px rgba(255,255,255,0.55);
+}
+
+/* =====================
+   FILTER & SORT BAR
+===================== */
+
+.filter-sort-bar {
+    display: flex;
+    gap: 8px;
+    padding: 12px 5px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    background: linear-gradient(180deg, #1e293b, #0f172a);
+    border-radius: 12px;
+    align-items: center;
+}
+
+.filter-sort-bar::-webkit-scrollbar {
+    height: 4px;
+}
+
+.more-filters-panel {
+    display: none;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    background: linear-gradient(160deg, rgba(20, 45, 78, 0.95), rgba(11, 26, 48, 0.95));
+    border: 1px solid rgba(111, 182, 255, 0.35);
+}
+
+.more-filters-panel.active {
+    display: block;
+}
+
+.panel-title {
+    color: #e2e8f0;
+    font-size: 13px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.panel-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.panel-chip {
+    background: rgba(37, 99, 235, 0.16);
+    color: #cfe5ff;
+    border: 1px solid rgba(99, 179, 255, 0.35);
+    border-radius: 16px;
+    padding: 6px 10px;
+    font-size: 11px;
+}
+
+.filter-tab {
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    font-size: 12px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.filter-tab:hover {
+    background: rgba(37, 99, 235, 0.2);
+    border-color: #2563eb;
+    color: white;
+}
+
+.filter-tab.active {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    border-color: #2563eb;
+    color: white;
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
+}
+
+.filter-tab.with-badge {
+    position: relative;
+}
+
+.filter-badge {
+    position: absolute;
+    top: -8px;
+    right: 0;
+    background: #22c55e;
+    color: white;
+    font-size: 8px;
+    padding: 1px 4px;
+    border-radius: 8px;
+}
+
+/* =====================
+   CUSTOMER SUPPORT PANEL
+===================== */
+
+.customer-support-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #1e293b, #111827);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    border-radius: 16px;
+    padding: 16px;
+    max-width: 220px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    z-index: 40;
+}
+
+.support-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.support-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.support-title {
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.support-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 10px;
+}
+
+.support-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #cbd5e1;
+    font-size: 12px;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+.support-item:hover {
+    color: #2563eb;
+}
+
+.support-icon-small {
+    color: #2563eb;
+    font-size: 14px;
+}
+
+.support-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 10px;
+}
+
+.share-btn {
+    flex: 1;
+    padding: 6px;
+    background: rgba(37, 99, 235, 0.2);
+    border: 1px solid #2563eb;
+    border-radius: 8px;
+    color: #2563eb;
+    font-size: 11px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.share-btn:hover {
+    background: rgba(37, 99, 235, 0.4);
+}
+
+.chat-btn {
+    flex: 1;
+    padding: 6px;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 11px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.chat-btn:hover {
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.6);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .results-container{
+        width: 100%;
+        margin: 0;
+        padding: 12px;
+    }
+
+    .flight-shell{
+        flex-direction:column;
+    }
+
+    .flight-right{
+        width:100%;
+        border-left:0;
+        border-top:1px solid #e4e8ef;
+        align-items:stretch;
+    }
+
+    .route-row{
+        flex-wrap:wrap;
+    }
+
+    .fare-grid{
+        grid-template-columns:1fr;
+    }
+
+    .fare-item-value{
+        max-width:none;
+    }
+
+    .customer-support-container {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        max-width: 200px;
+        padding: 12px;
+    }
+}
+
+/* Floating Chat Widget */
+.floating-chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.5);
+    z-index: 41;
+}
+
+/* =====================
+   FARE OPTIONS PREMIUM
+===================== */
+
+
+
+
+/* =====================
+   FARE OPTIONS TOGGLE FIX
+===================== */
+
+/* ======================
+   PREMIUM FARE DESIGN
+====================== */
+
+.fare-options{
+    display:none;
+    background:#cfd5df;
+    border-top:1px solid #c0c9d7;
+    padding:16px 18px 18px;
+}
+
+.fare-options.active{
+    display:block;
+}
+
+.fare-options-label{
+    color:#2f3a4c;
+    font-size:13px;
+    margin-bottom:10px;
+    font-weight:500;
+}
+
+.fare-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+}
+
+.fare-option{
+    background:#dbe1ea;
+    border:1px solid #b7c1d0;
+    border-radius:8px;
+    padding:10px 10px 12px;
+    position:relative;
+}
+
+.fare-option--best::before{
+    content:"Cheapest";
+    position:absolute;
+    top:-11px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#e5f8d9;
+    border:1px solid #8fc875;
+    color:#2a6c24;
+    font-size:12px;
+    border-radius:4px;
+    padding:1px 8px;
+}
+
+.fare-main{
+    margin-bottom:8px;
+}
+
+.fare-title{
+    font-size:13px;
+    font-weight:500;
+    color:#212c3a;
+    margin-bottom:8px;
+}
+
+.fare-list{
+    margin:0;
+    padding:0;
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.fare-item{
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:start;
+    gap:8px;
+    color:#3f4d63;
+    font-size:11px;
+    line-height:1.25;
+}
+
+.fare-item-label{
+    color:#5a677d;
+}
+
+.fare-item-value{
+    color:#263548;
+    text-align:right;
+    max-width:130px;
+}
+
+.fare-link{
+    color:#1a5ea8;
+    text-decoration:none;
+}
+
+.fare-link:hover{
+    text-decoration:underline;
+}
+
+.fare-price{
+    margin-top:12px;
+    border:0;
+    width:100%;
+    border-radius:4px;
+    background:#0a4e97;
+    color:#ffffff;
+    padding:9px 10px;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+}
+</style>
+
+<div class="results-container">
+
+    <!-- DATE SLIDER -->
+    <div class="date-slider">
+        {% for d in date_prices %}
+        <div class="date-card {% if d.date == departure_date %}active{% endif %}"
+             onclick="selectDate('{{ d.date }}')">
+
+            {% if d.is_cheapest %}
+            <div class="cheapest-badge">Best</div>
+            {% endif %}
+
+            <div class="date-day">{{ d.day }}</div>
+            <div class="date-price">PKR {{ d.price }}</div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- FILTER & SORT BAR -->
+    <div class="filter-sort-bar">
+        <div class="filter-tab active" onclick="setFilter(this, 'suggested')">Suggested</div>
+        <div class="filter-tab" onclick="setFilter(this, 'cheapest')">Cheapest</div>
+        <div class="filter-tab" onclick="setFilter(this, 'nonstop')">Nonstop</div>
+        <div class="filter-tab" onclick="toggleSortBy()">Sort by</div>
+        <div class="filter-tab with-badge" onclick="toggleMoreFilters()">
+            More Filters
+            <span class="filter-badge">2</span>
+        </div>
+    </div>
+
+    <div id="moreFiltersPanel" class="more-filters-panel">
+        <div class="panel-title">Advanced Filters</div>
+        <div class="panel-row">
+            <div class="panel-chip">Stops: 0 / 1 / 2+</div>
+            <div class="panel-chip">Airlines</div>
+            <div class="panel-chip">Departure: Morning / Evening</div>
+            <div class="panel-chip">Arrival Time</div>
+        </div>
+    </div>
+
+    <div class="section-title">
+        Available Flights ({{ flights|length }})
+    </div>
+
+    <div id="flights-container">
+    {% for flight in flights %}
+
+    <div class="flight-card"
+         data-flight-card
+         data-date="{{ flight.date|default:departure_date }}"
+         data-stops="{{ flight.stops|default:0 }}"
+         data-base-price="{{ flight.base_price|default:0 }}"
+         data-airline="{{ flight.airline }}"
+         data-departure-time="{{ flight.departure_time }}"
+         data-arrival-time="{{ flight.arrival_time }}"
+         data-stop-label="{{ flight.stop_label|default:'Nonstop' }}">
+        <div class="flight-shell">
+            <div class="flight-left">
+                <div class="flight-top">
+                    <div class="time-block">
+                        <div class="time">{{ flight.departure_time }}</div>
+                    </div>
+
+                    <div class="duration-pill">{{ flight.duration }}</div>
+
+                    <div class="time-block" style="text-align:right;">
+                        <div class="time">
+                            {{ flight.arrival_time }}
+                            {% if flight.arrival_plus_days|default:0 > 0 %}
+                            <span class="plus-day">+{{ flight.arrival_plus_days }}D</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="route-row">
+                    <span>{{ from_city }}</span>
+                    <span>-</span>
+                    <span class="stop-link">{{ flight.stop_label|default:"1 Stop" }}</span>
+                    <span>-</span>
+                    <span>{{ to_city }}</span>
+                </div>
+
+                <div class="airline-row">
+                    <img src="{{ flight.logo }}" class="logo" onerror="this.style.display='none'">
+                    <span>{{ flight.airline }}</span>
+                </div>
+
+                <div class="flight-meta">
+                    <span class="flight-code">{{ flight.flight_number|default:flight.airline }}</span>
+                    <span class="meal-meta">&#127860; {{ flight.meal_text|default:"Meal" }}</span>
+                </div>
+            </div>
+
+            <div class="flight-right">
+                <div class="save-badge">i Save {{ flight.save_price|intcomma }}- PKR</div>
+                <button class="price-btn" onclick="toggleFare(this)">PKR {{ flight.base_price|intcomma }}</button>
+            </div>
+        </div>
+<div class="fare-options">
+    <div class="fare-options-label">Select a fare option</div>
+    <div class="fare-grid">
+    <div class="fare-option fare-option--best">
+        <div class="fare-main">
+            <div class="fare-title">Lite</div>
+            <ul class="fare-list">
+                <li class="fare-item"><span class="fare-item-label">Carry-on Baggage</span><span class="fare-item-value">7kg 1 Piece</span></li>
+                <li class="fare-item"><span class="fare-item-label">Check-in Baggage</span><span class="fare-item-value">Additional Cost</span></li>
+                <li class="fare-item"><span class="fare-item-label">Seat Selection</span><span class="fare-item-value">Additional Cost</span></li>
+                <li class="fare-item"><span class="fare-item-label">Meal</span><span class="fare-item-value">Included</span></li>
+                <li class="fare-item"><span class="fare-item-label">Modification</span><span class="fare-item-value"><a class="fare-link" href="#">Penalties Apply</a></span></li>
+                <li class="fare-item"><span class="fare-item-label">Cancellation</span><span class="fare-item-value">Non-refundable</span></li>
+            </ul>
+        </div>
+        <button type="button" class="fare-price" onclick="startBooking(this, 'Lite', '{{ flight.base_price|default:0 }}')">PKR {{ flight.base_price|intcomma }}</button>
+    </div>
+
+    <div class="fare-option">
+        <div class="fare-main">
+            <div class="fare-title">Value</div>
+            <ul class="fare-list">
+                <li class="fare-item"><span class="fare-item-label">Carry-on Baggage</span><span class="fare-item-value">7kg 1 Piece</span></li>
+                <li class="fare-item"><span class="fare-item-label">Check-in Baggage</span><span class="fare-item-value">Total:30kg Pcs: 1</span></li>
+                <li class="fare-item"><span class="fare-item-label">Seat Selection</span><span class="fare-item-value">Additional Cost</span></li>
+                <li class="fare-item"><span class="fare-item-label">Meal</span><span class="fare-item-value">Included</span></li>
+                <li class="fare-item"><span class="fare-item-label">Modification</span><span class="fare-item-value"><a class="fare-link" href="#">Penalties Apply</a></span></li>
+                <li class="fare-item"><span class="fare-item-label">Cancellation</span><span class="fare-item-value"><a class="fare-link" href="#">Penalties Apply</a></span></li>
+            </ul>
+        </div>
+        <button type="button" class="fare-price" onclick="startBooking(this, 'Value', '{{ flight.standard_price|default:0 }}')">PKR {{ flight.standard_price|intcomma }}</button>
+    </div>
+
+    <div class="fare-option">
+        <div class="fare-main">
+            <div class="fare-title">Flex</div>
+            <ul class="fare-list">
+                <li class="fare-item"><span class="fare-item-label">Carry-on Baggage</span><span class="fare-item-value">7kg 1 Piece</span></li>
+                <li class="fare-item"><span class="fare-item-label">Check-in Baggage</span><span class="fare-item-value">Total:40kg Pcs: 2</span></li>
+                <li class="fare-item"><span class="fare-item-label">Seat Selection</span><span class="fare-item-value">Included</span></li>
+                <li class="fare-item"><span class="fare-item-label">Meal</span><span class="fare-item-value">Included</span></li>
+                <li class="fare-item"><span class="fare-item-label">Modification</span><span class="fare-item-value"><a class="fare-link" href="#">Penalties Apply</a></span></li>
+                <li class="fare-item"><span class="fare-item-label">Cancellation</span><span class="fare-item-value"><a class="fare-link" href="#">Penalties Apply</a></span></li>
+            </ul>
+        </div>
+        <button type="button" class="fare-price" onclick="startBooking(this, 'Flex', '{{ flight.value_price|default:0 }}')">PKR {{ flight.value_price|intcomma }}</button>
+    </div>
+    </div>
+</div>
+    </div>
+
+    {% endfor %}
+    </div>
+
+</div>
+
+<!-- CUSTOMER SUPPORT PANEL -->
+<div class="customer-support-container">
+    <div class="support-header">
+        <div class="support-icon">💬</div>
+        <div class="support-title">24/7 Customer Support</div>
+    </div>
+
+    <div class="support-contact">
+        <a href="tel:+923402125530" class="support-item">
+            <span class="support-icon-small">📱</span>
+            <span>03402125530</span>
+        </a>
+        <a href="tel:+923402125530" class="support-item">
+            <span class="support-icon-small">📞</span>
+            <span>+92 340 212 5530</span>
+        </a>
+        <a href="mailto:98shahidkhan@gmail.com" class="support-item">
+            <span class="support-icon-small">✉️</span>
+            <span>98shahidkhan@gmail.com</span>
+        </a>
+    </div>
+
+    <div class="support-actions">
+        <button class="share-btn" onclick="shareResults()">📤 Share</button>
+        <button class="chat-btn" onclick="startChat()">💬 Chat</button>
+    </div>
+</div>
+
+<script>
+// Global state
+let currentFilter = 'suggested';
+let currentSort = 'suggested';
+let selectedDate = '{{ departure_date }}';
+let fromCityDisplay = '{{ from_city|escapejs }}';
+let toCityDisplay = '{{ to_city|escapejs }}';
+let fromCityCode = '{{ from_city_code|escapejs }}';
+let toCityCode = '{{ to_city_code|escapejs }}';
+let isLoading = false;
+let allFlights = [];
+
+function formatPrice(value) {
+    const parsed = Number.parseInt(value || 0, 10);
+    return Number.isNaN(parsed) ? "0" : parsed.toLocaleString();
+}
+
+function generateFlightHTML(flight, index) {
+
+    const basePrice = parseInt(flight.base_price || 0);
+    const standardPrice = parseInt(flight.standard_price || 0);
+    const valuePrice = parseInt(flight.value_price || 0);
+    const savePrice = parseInt(flight.save_price || (valuePrice - basePrice) || 0);
+    const stopLabel = flight.stop_label || ((parseInt(flight.stops || 0, 10) === 0) ? "Nonstop" : "1 Stop");
+    const flightCode = flight.flight_number || flight.airline || "";
+    const mealText = flight.meal_text || "Meal";
+    const arrivalPlusDays = parseInt(flight.arrival_plus_days || 0, 10);
+    const arrivalPlusLabel = arrivalPlusDays > 0 ? `<span class="plus-day">+${arrivalPlusDays}D</span>` : "";
+
+    return `
+    <div class="flight-card"
+         data-flight-card
+         data-date="${flight.date}"
+         data-stops="${flight.stops}"
+         data-base-price="${basePrice}"
+         data-airline="${flight.airline || ''}"
+         data-departure-time="${flight.departure_time || ''}"
+         data-arrival-time="${flight.arrival_time || ''}"
+         data-stop-label="${stopLabel}">
+        <div class="flight-shell">
+            <div class="flight-left">
+                <div class="flight-top">
+                    <div class="time-block">
+                        <div class="time">${flight.departure_time}</div>
+                    </div>
+
+                    <div class="duration-pill">${flight.duration}</div>
+
+                    <div class="time-block" style="text-align:right;">
+                        <div class="time">${flight.arrival_time}${arrivalPlusLabel}</div>
+                    </div>
+                </div>
+
+                <div class="route-row">
+                    <span>${fromCityDisplay}</span>
+                    <span>-</span>
+                    <span class="stop-link">${stopLabel}</span>
+                    <span>-</span>
+                    <span>${toCityDisplay}</span>
+                </div>
+
+                <div class="airline-row">
+                    <img src="${flight.logo}" class="logo" onerror="this.style.display='none'">
+                    <span>${flight.airline}</span>
+                </div>
+
+                <div class="flight-meta">
+                    <span class="flight-code">${flightCode}</span>
+                    <span class="meal-meta">&#127860; ${mealText}</span>
+                </div>
+            </div>
+
+            <div class="flight-right">
+                <div class="save-badge">i Save ${formatPrice(savePrice)}- PKR</div>
+                <button class="price-btn" onclick="toggleFare(this)">PKR ${formatPrice(basePrice)}</button>
+            </div>
+        </div>
+
+        <div class="fare-options">
+            <div class="fare-options-label">Select a fare option</div>
+            <div class="fare-grid">
+            <div class="fare-option fare-option--best">
+                <div class="fare-main">
+                    <div class="fare-title">Lite</div>
+                    <ul class="fare-list">
+                        <li class="fare-item"><span class="fare-item-label">Carry-on Baggage</span><span class="fare-item-value">7kg 1 Piece</span></li>
+                        <li class="fare-item"><span class="fare-item-label">Check-in Baggage</span><span class="fare-item-value">Additional Cost</span></li>
+                        <li class="fare-item"><span class="fare-item-label">Seat Selection</span><span class="fare-item-value">Additional Cost</span></li>
+                        <li class="fare-item"><span class="fare-item-label">Meal</span><span class="fare-item-value">Included</span></li>
+                        <li class="fare-item"><span class="fare-item-label">Modification</span><span class="fare-item-value"><a class="fare-link" href="#">Penalties Apply</a></span></li>
+                        <li class="fare-item"><span class="fare-item-label">Cancellation</span><span class="fare-item-value">Non-refundable</span></li>
+                    </ul>
+                </div>
+                <button type="button" class="fare-price" onclick="startBooking(this, 'Lite', '${basePrice}')">PKR ${formatPrice(basePrice)}</button>
+            </div>
+
+            <div class="fare-option">
+                <div class="fare-main">
+                    <div class="fare-title">Value</div>
+                    <ul class="fare-list">
+                        <li class="fare-item"><span class="fare-item-label">Carry-on Baggage</span><span class="fare-item-value">7kg 1 Piece</span></li>
+                        <li class="fare-item"><span class="fare-item-label">Check-in Baggage</span><span class="fare-item-value">Total:30kg Pcs: 1</span></li>
+                        <li class="fare-item"><span class="fare-item-label">Seat Selection</span><span class="fare-item-value">Additional Cost</span></li>
+                        <li class="fare-item"><span class="fare-item-label">Meal</span><span class="fare-item-value">Included</span></li>
+                        <li class="fare-item"><span class="fare-item-label">Modification</span><span class="fare-item-value"><a class="fare-link" href="#">Penalties Apply</a></span></li>
+                        <li class="fare-item"><span class="fare-item-label">Cancellation</span><span class="fare-item-value"><a class="fare-link" href="#">Penalties Apply</a></span></li>
+                    </ul>
+                </div>
+                <button type="button" class="fare-price" onclick="startBooking(this, 'Value', '${standardPrice}')">PKR ${formatPrice(standardPrice)}</button>
+            </div>
+
+            <div class="fare-option">
+                <div class="fare-main">
+                    <div class="fare-title">Flex</div>
+                    <ul class="fare-list">
+                        <li class="fare-item"><span class="fare-item-label">Carry-on Baggage</span><span class="fare-item-value">7kg 1 Piece</span></li>
+                        <li class="fare-item"><span class="fare-item-label">Check-in Baggage</span><span class="fare-item-value">Total:40kg Pcs: 2</span></li>
+                        <li class="fare-item"><span class="fare-item-label">Seat Selection</span><span class="fare-item-value">Included</span></li>
+                        <li class="fare-item"><span class="fare-item-label">Meal</span><span class="fare-item-value">Included</span></li>
+                        <li class="fare-item"><span class="fare-item-label">Modification</span><span class="fare-item-value"><a class="fare-link" href="#">Penalties Apply</a></span></li>
+                        <li class="fare-item"><span class="fare-item-label">Cancellation</span><span class="fare-item-value"><a class="fare-link" href="#">Penalties Apply</a></span></li>
+                    </ul>
+                </div>
+                <button type="button" class="fare-price" onclick="startBooking(this, 'Flex', '${valuePrice}')">PKR ${formatPrice(valuePrice)}</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    `;
+}
+function selectDate(date) {
+    selectedDate = date;
+    
+    // Update active date card
+    document.querySelectorAll('.date-card').forEach(card => {
+        card.classList.remove('active');
+        if (card.getAttribute('onclick').includes(date)) {
+            card.classList.add('active');
+        }
+    });
+    
+    // Show loading state
+    isLoading = true;
+    const flightsContainer = document.getElementById('flights-container');
+    const flightsSection = document.querySelector('.section-title');
+    
+    flightsContainer.innerHTML = '<div style="text-align:center; color:#cbd5e1; padding:40px;">⏳ Loading flights for ' + date + '...</div>';
+    flightsSection.textContent = '⏳ Loading flights...';
+    
+    // Fetch flights for the selected date from API
+    const apiUrl = `/api/flights-by-date/?from_city=${encodeURIComponent(fromCityCode)}&to_city=${encodeURIComponent(toCityCode)}&date=${date}`;
+    
+    console.log('Fetching flights from:', apiUrl);
+    
+    fetch(apiUrl)
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Received data:', data);
+            if (data.flights && data.flights.length > 0) {
+                allFlights = data.flights;
+                renderFlights(data.flights);
+                filterAndDisplayFlights();
+            } else {
+                flightsSection.textContent = '✈️ Available Flights (0)';
+                flightsContainer.innerHTML = '<div style="text-align:center; color:#cbd5e1; padding:40px;">No flights available for this date. Try another date!</div>';
+            }
+            isLoading = false;
+        })
+        .catch(error => {
+            console.error('Error fetching flights:', error);
+            flightsSection.textContent = `❌ Error: ${error.message}`;
+            flightsContainer.innerHTML = `<div style="text-align:center; color:#ef4444; padding:40px;"><strong>Error loading flights:</strong><br>${error.message}<br><br>Please verify origin and destination selection.</div>`;
+            isLoading = false;
+        });
+}
+
+function renderFlights(flights) {
+    const container = document.getElementById('flights-container');
+    container.innerHTML = '';
+    
+    flights.forEach((flight, index) => {
+        const flightHTML = generateFlightHTML(flight, index);
+        container.innerHTML += flightHTML;
+    });
+}
+
+function setFilter(element, filterType) {
+    // Remove active class from all tabs
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    // Add active class to clicked tab
+    element.classList.add('active');
+    
+    currentFilter = filterType;
+    filterAndDisplayFlights();
+}
+
+function filterAndDisplayFlights() {
+    const allCards = Array.from(document.querySelectorAll('[data-flight-card]'));
+    const container = document.getElementById('flights-container');
+
+    const filteredCards = allCards.filter(card => {
+        const flightDate = card.getAttribute('data-date');
+        const flightStops = parseInt(card.getAttribute('data-stops') || 0);
+        
+        let shouldShow = true;
+        
+        // Filter by date
+        if (selectedDate && flightDate !== selectedDate) {
+            shouldShow = false;
+        }
+        
+        // Filter by type
+        if (shouldShow) {
+            if (currentFilter === 'nonstop' && flightStops > 0) {
+                shouldShow = false;
+            }
+        }
+
+        return shouldShow;
+    });
+
+    let cardsToShow = filteredCards;
+
+    if (currentFilter === 'cheapest') {
+        cardsToShow = [...filteredCards]
+            .sort((a, b) => {
+                const priceA = parseInt(a.getAttribute('data-base-price') || '0', 10);
+                const priceB = parseInt(b.getAttribute('data-base-price') || '0', 10);
+                return priceA - priceB;
+            })
+            .slice(0, 5);
+    }
+
+    allCards.forEach(card => {
+        card.style.display = 'none';
+    });
+
+    cardsToShow.forEach(card => {
+        card.style.display = 'block';
+        container.appendChild(card);
+    });
+
+    const visibleCount = cardsToShow.length;
+    
+    // Update the section title with count
+    const sectionTitle = document.querySelector('.section-title');
+    if (sectionTitle) {
+        sectionTitle.textContent = `✈️ Available Flights (${visibleCount})`;
+    }
+    
+    console.log('Filtered flights by:', { date: selectedDate, filter: currentFilter, visible: visibleCount });
+}
+
+function toggleSortBy() {
+    const sortOptions = `
+1. Price (Low to High)
+2. Price (High to Low)
+3. Duration (Short to Long)
+4. Departure Time (Early to Late)
+    `;
+    alert('Sort options:\n' + sortOptions);
+}
+
+function toggleMoreFilters() {
+    const panel = document.getElementById('moreFiltersPanel');
+    if (!panel) return;
+    panel.classList.toggle('active');
+}
+
+function shareResults() {
+    const searchUrl = `${window.location.origin}${window.location.pathname}?from_city=${encodeURIComponent(fromCityDisplay)}&to_city=${encodeURIComponent(toCityDisplay)}&from_code=${encodeURIComponent(fromCityCode)}&to_code=${encodeURIComponent(toCityCode)}&departure_date=${selectedDate}`;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: 'Flight Results',
+            text: `Flight results from ${selectedDate}`,
+            url: searchUrl
+        });
+    } else {
+        // Fallback: copy to clipboard using modern API
+        navigator.clipboard.writeText(searchUrl).then(() => {
+            alert('Search link copied to clipboard!');
+        }).catch(() => {
+            // Fallback for older browsers
+            const textarea = document.createElement('textarea');
+            textarea.value = searchUrl;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('Search link copied to clipboard!');
+        });
+    }
+}
+
+function startChat() {
+    // Open WhatsApp
+    const message = encodeURIComponent(`Hi, I need help with my flight search for ${fromCityDisplay} to ${toCityDisplay} on ${selectedDate}`);
+    window.open(`https://wa.me/923047772782?text=${message}`, '_blank');
+}
+
+function startBooking(button, fareType, selectedPrice){
+    const card = button.closest(".flight-card");
+    if (!card) return;
+
+    const params = new URLSearchParams({
+        from_city: fromCityDisplay,
+        to_city: toCityDisplay,
+        departure_date: card.getAttribute("data-date") || selectedDate,
+        airline: card.getAttribute("data-airline") || "",
+        departure_time: card.getAttribute("data-departure-time") || "",
+        arrival_time: card.getAttribute("data-arrival-time") || "",
+        stop_label: card.getAttribute("data-stop-label") || "",
+        fare_type: fareType || "",
+        price: String(selectedPrice || "").replace(/,/g, ""),
+    });
+
+    window.location.href = `/booking-request/?${params.toString()}`;
+}
+
+function toggleFare(button){
+    const card = button.closest(".flight-card");
+    const fares = card.querySelector(".fare-options");
+
+    // Close all other fare sections first
+    document.querySelectorAll(".flight-card").forEach(item => {
+        const section = item.querySelector(".fare-options");
+        const itemButton = item.querySelector(".price-btn");
+
+        if(section && section !== fares){
+            section.classList.remove("active");
+        }
+
+        if(itemButton && itemButton !== button){
+            itemButton.classList.remove("active");
+        }
+    });
+
+    // Toggle current one
+    const isOpen = fares.classList.toggle("active");
+    button.classList.toggle("active", isOpen);
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded. Initial flights count:', document.querySelectorAll('[data-flight-card]').length);
+    filterAndDisplayFlights();
+});
+</script>
+
+{% endblock %}
+
+
+
+
+

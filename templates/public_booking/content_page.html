@@ -1,0 +1,39 @@
+{% extends "includes/base.html" %}
+
+{% block content %}
+<style>
+.content-shell {
+    max-width: 980px;
+    margin: 48px auto;
+    padding: 0 20px;
+}
+
+.content-card {
+    background: #ffffff;
+    border: 1px solid #dbe7ff;
+    border-radius: 18px;
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+    padding: 28px;
+}
+
+.content-card h1 {
+    margin: 0 0 12px;
+    color: #0f2b52;
+    font-size: 30px;
+}
+
+.content-card p {
+    margin: 0;
+    color: #334155;
+    line-height: 1.75;
+    white-space: pre-line;
+}
+</style>
+
+<div class="content-shell">
+    <div class="content-card">
+        <h1>{{ title }}</h1>
+        <p>{{ content }}</p>
+    </div>
+</div>
+{% endblock %}

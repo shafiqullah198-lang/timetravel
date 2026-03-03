@@ -1,0 +1,550 @@
+{% extends "includes/base.html" %}
+{% block content %}
+
+<style>
+.hero {
+    position: relative;
+    width: 100%;
+    min-height: 90vh;
+    background: url('/static/images/plane-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url('/static/images/logo.png?v=20260223');
+    background-repeat: no-repeat;
+    background-position: center 58%;
+    background-size: min(75vw, 980px);
+    opacity: 0.30;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.hero > * {
+    position: relative;
+    z-index: 1;
+}
+
+.control-row {
+    display:grid;
+    grid-template-columns: 250px 250px;
+    column-gap: 225px;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.trip-toggle {
+    background: rgba(255,255,255,0.15);
+    padding:5px;
+    border-radius:25px;
+    display:flex;
+}
+
+.trip-btn {
+    background: transparent;
+    border:none;
+    padding:8px 18px;
+    border-radius:20px;
+    color:white;
+    cursor:pointer;
+}
+
+.trip-btn.active {
+    background:white;
+    color:#4f73b7;
+}
+
+.select-box {
+    padding:10px 18px;
+    border-radius:25px;
+    border:none;
+    outline:none;
+}
+
+.control-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 250px;
+    margin-left: 0;
+    justify-content: space-between;
+}
+
+.control-right .select-box {
+    min-width: 119px;
+    width: 119px;
+}
+
+.search-wrapper {
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+    background: rgba(1, 29, 48, 0.85);
+    border-radius: 25px;
+    padding: 50px;
+    color: #c2c8da;
+}
+
+.tabs {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+.tabs span {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.tabs span.active {
+    border-bottom: 3px solid white;
+    padding-bottom: 5px;
+    opacity: 1;
+}
+
+.trip-options {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.trip-options button {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+}
+
+.search-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+
+
+.search-row input {
+    flex: 1;
+    padding: 15px;
+    border-radius: 30px;
+    border: none;
+    outline: none;
+}
+
+.location-row {
+    display: flex;
+    gap: 225px;
+    margin-bottom: 20px;
+}
+
+.input-box {
+    flex: 0 0 250px;
+}
+
+.input-box input[type="text"] {
+    width: 250px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    background: white;
+    color: #333;
+    font-size: 14px;
+}
+
+.input-box {
+    position: relative;
+}
+
+.suggestions {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 14px 28px rgba(2, 12, 27, 0.18);
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    z-index: 15;
+}
+
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    color: #111827;
+    font-size: 13px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background: #f9fafb;
+}
+
+.suggestion-icon {
+    width: 20px;
+    height: 20px;
+    color: #374151;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 20px;
+    margin-top: 1px;
+}
+
+.suggestion-main {
+    font-weight: 500;
+    color: #111827;
+    line-height: 1.25;
+}
+
+.suggestion-sub {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.suggestion-code {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+.suggestion-empty {
+    color: #6b7280;
+    cursor: default;
+}
+
+.suggestion-title {
+    padding: 10px 12px 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #111827;
+    border-bottom: 1px solid #f3f4f6;
+    background: #ffffff;
+}
+
+.date-row {
+    display: flex;
+    gap: 225px;
+    margin-bottom: 20px;
+}
+
+.date-row input {
+    flex: 0 0 250px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    background: white;
+}
+
+
+
+
+.search-btn {
+    display: block;
+    margin-right: auto;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    padding: 12px 40px;
+    border-radius: 30px;
+    border: none;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.date-row input:disabled {
+    background: #e5e7eb;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .control-row {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .control-right {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .location-row,
+    .date-row {
+        gap: 12px;
+        flex-direction: column;
+    }
+
+    .input-box,
+    .date-row input {
+        flex: 1 1 auto;
+    }
+
+    .input-box input[type="text"],
+    .date-row input {
+        width: 100%;
+    }
+}
+
+
+
+</style>
+
+<div class="hero">
+    <div class="search-wrapper">
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <span class="active">✈ Flights</span>
+       
+    </div>
+      <form method="GET" action="{% url 'search_results' %}">
+
+   
+    
+
+
+    
+
+        <!-- Trip + Passenger Row -->
+        <div class="control-row">
+
+            <div class="trip-toggle">
+                <button type="button" onclick="setTrip('oneway')" id="onewayBtn" class="trip-btn active">One Way</button>
+                <button type="button" onclick="setTrip('return')" id="returnBtn" class="trip-btn">Return</button>
+                
+            </div>
+
+            <div class="control-right">
+                <select name="passengers" class="select-box">
+                    <option>1 Adult</option>
+                    <option>2 Adults</option>
+                    <option>3 Adults</option>
+                </select>
+
+                <select name="cabin_class" class="select-box">
+                    <option>Economy</option>
+                    <option>Business</option>
+                    <option>First Class</option>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- FROM / TO ROW -->
+        <div class="location-row">
+
+            <div class="input-box">
+                <input type="text" id="fromCity" name="from_city" placeholder="Flying From (City or Airport)" required autocomplete="off">
+                <input type="hidden" id="fromCode" name="from_code">
+                <div id="fromSuggestions" class="suggestions"></div>
+            </div>
+
+            <div class="input-box">
+                <input type="text" id="toCity" name="to_city" placeholder="Flying To (City or Airport)" required autocomplete="off">
+                <input type="hidden" id="toCode" name="to_code">
+                <div id="toSuggestions" class="suggestions"></div>
+            </div>
+
+        </div>
+
+        <!-- DATE ROW -->
+        <div class="date-row">
+            <input type="date" name="departure_date" required>
+            <input type="date" name="return_date" id="returnDate">
+        </div>
+
+        <button class="search-btn">Search Flights</button>
+
+    </form>
+
+</div>
+
+</div>
+
+
+
+
+<!-- Popular Destinations Section -->
+<div class="section container">
+    <h2 style="text-align:center; margin-bottom:40px;">Popular Destinations</h2>
+
+    <div style="display:flex; gap:20px; flex-wrap:wrap;">
+        <div class="card" style="flex:1; min-width:250px;">
+            <h3>Dubai</h3>
+            <p>Luxury shopping & skyscrapers</p>
+        </div>
+
+        <div class="card" style="flex:1; min-width:250px;">
+            <h3>Istanbul</h3>
+            <p>History meets modern Europe</p>
+        </div>
+
+        <div class="card" style="flex:1; min-width:250px;">
+            <h3>Jeddah</h3>
+            <p>Gateway to Makkah</p>
+        </div>
+    </div>
+</div>
+<script>
+function debounce(callback, delay) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => callback(...args), delay);
+    };
+}
+
+function escapeHtml(value) {
+    return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+}
+
+function buildSuggestionItem(item) {
+    const address = item.address || {};
+    const city = address.cityName || "";
+    const airportName = item.name || city || "Unknown Airport";
+    const country = address.countryCode || "";
+    const code = item.iataCode || "";
+    const line1 = `${city || airportName}${country ? `, ${country}` : ""}`;
+    const label = `${line1} (${code})`;
+    return `
+        <div class="suggestion-item" data-code="${escapeHtml(code)}" data-label="${escapeHtml(label)}">
+            <span class="suggestion-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14" focusable="false">
+                    <path fill="currentColor" d="M22 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9L3 14v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5L22 16z"></path>
+                </svg>
+            </span>
+            <div>
+                <div class="suggestion-main">${escapeHtml(line1)} <span class="suggestion-code">(${escapeHtml(code)})</span></div>
+                <div class="suggestion-sub">${escapeHtml(airportName)}</div>
+            </div>
+        </div>
+    `;
+}
+
+function renderSuggestionList(rows, options = {}) {
+    const title = options.title ? `<div class="suggestion-title">${escapeHtml(options.title)}</div>` : "";
+    return `${title}${rows.map(buildSuggestionItem).join("")}`;
+}
+
+function setupAirportAutocomplete(inputId, suggestionBoxId, hiddenCodeId) {
+    const input = document.getElementById(inputId);
+    const suggestionBox = document.getElementById(suggestionBoxId);
+    const hiddenCode = document.getElementById(hiddenCodeId);
+
+    const fetchSuggestions = debounce(async (keyword) => {
+        try {
+            const term = (keyword || "").trim();
+            const response = await fetch(`/airport-search/?keyword=${encodeURIComponent(term)}`);
+            const data = await response.json();
+            const rows = Array.isArray(data) ? data.filter(x => x.iataCode) : [];
+
+            if (!rows.length) {
+                suggestionBox.innerHTML = '<div class="suggestion-item suggestion-empty">No matching airports found</div>';
+                suggestionBox.style.display = "block";
+                return;
+            }
+
+            const primary = rows.slice(0, 6);
+            const trending = rows.slice(6, 10);
+
+            if (!term) {
+                suggestionBox.innerHTML = renderSuggestionList(primary, { title: "Trending" });
+            } else if (trending.length) {
+                suggestionBox.innerHTML = renderSuggestionList(primary) + renderSuggestionList(trending, { title: "Trending" });
+            } else {
+                suggestionBox.innerHTML = renderSuggestionList(primary);
+            }
+            suggestionBox.style.display = "block";
+        } catch (error) {
+            suggestionBox.style.display = "none";
+            suggestionBox.innerHTML = "";
+            console.error("Airport autocomplete error:", error);
+        }
+    }, 250);
+
+    input.addEventListener("input", (event) => {
+        hiddenCode.value = "";
+        fetchSuggestions(event.target.value);
+    });
+
+    input.addEventListener("focus", () => {
+        if (!input.value.trim()) {
+            fetchSuggestions("");
+        }
+    });
+
+    suggestionBox.addEventListener("click", (event) => {
+        const row = event.target.closest(".suggestion-item");
+        if (!row || !row.dataset.code) return;
+        input.value = row.dataset.label;
+        hiddenCode.value = row.dataset.code;
+        suggestionBox.style.display = "none";
+        suggestionBox.innerHTML = "";
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!suggestionBox.contains(event.target) && event.target !== input) {
+            suggestionBox.style.display = "none";
+        }
+    });
+}
+
+function setTrip(type) {
+    let returnDate = document.getElementById("returnDate");
+    let oneBtn = document.getElementById("onewayBtn");
+    let returnBtn = document.getElementById("returnBtn");
+
+    if(type === "oneway") {
+        returnDate.disabled = true;
+        returnDate.style.opacity = "0.5";
+        returnDate.value = "";
+
+        oneBtn.classList.add("active");
+        returnBtn.classList.remove("active");
+    } else {
+        returnDate.disabled = false;
+        returnDate.style.opacity = "1";
+
+        returnBtn.classList.add("active");
+        oneBtn.classList.remove("active");
+    }
+}
+
+// Default state
+setTrip('oneway');
+setupAirportAutocomplete("fromCity", "fromSuggestions", "fromCode");
+setupAirportAutocomplete("toCity", "toSuggestions", "toCode");
+</script>
+
+
+
+{% endblock %}

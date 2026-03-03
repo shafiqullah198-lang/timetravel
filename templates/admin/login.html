@@ -1,0 +1,203 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    :root {
+        --brand-1: #0a1e3f;
+        --brand-2: #12437a;
+        --brand-3: #2563eb;
+        --text-light: #dbeafe;
+    }
+
+    html, body {
+        height: 100%;
+    }
+
+    body.login,
+    body {
+        background: radial-gradient(circle at 20% 0%, #5fa8ff 0%, #183a63 38%, #091326 78%);
+        min-height: 100%;
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+    }
+
+    #header,
+    .breadcrumbs,
+    #nav-sidebar,
+    #toggle-nav-sidebar,
+    .toggle-nav-sidebar,
+    .main > .content > h1,
+    #content h1,
+    .messagelist,
+    .help,
+    #toolbar {
+        display: none;
+    }
+
+    #container {
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        min-height: 100%;
+        width: 100%;
+        padding: 0;
+    }
+
+    #container > .main,
+    #container > .main.shifted,
+    .main,
+    .content {
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #content {
+        width: 100%;
+        max-width: 460px;
+        margin: 0;
+        padding: 0;
+        float: none;
+    }
+
+    .login-card {
+        background: linear-gradient(165deg, rgba(7, 23, 46, 0.95), rgba(15, 45, 82, 0.95));
+        border-radius: 18px;
+        border: 1px solid rgba(156, 204, 255, 0.35);
+        box-shadow: 0 26px 60px rgba(2, 10, 24, 0.45);
+        overflow: hidden;
+    }
+
+    .login-head {
+        padding: 22px;
+        background: linear-gradient(125deg, #0f3768, #1d5ca8);
+        color: white;
+    }
+
+    .login-title {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    .login-sub {
+        margin-top: 6px;
+        color: var(--text-light);
+        font-size: 13px;
+    }
+
+    #content-main {
+        padding: 22px;
+    }
+
+    #content-main .form-row {
+        padding: 0;
+        margin-bottom: 14px;
+    }
+
+    #content-main label {
+        color: #e2e8f0;
+        font-weight: 500;
+    }
+
+    #content-main input[type="text"],
+    #content-main input[type="password"] {
+        width: 100%;
+        background: #edf4ff;
+        border: 1px solid rgba(79, 137, 206, 0.35);
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-top: 6px;
+        color: #0f172a;
+    }
+
+    .submit-row {
+        background: transparent;
+        border: 0;
+        margin: 8px 0 0;
+        padding: 0;
+    }
+
+    .submit-row input[type="submit"] {
+        width: 100%;
+        border: 0;
+        border-radius: 12px;
+        padding: 12px 14px;
+        color: white;
+        font-weight: 600;
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+    }
+
+    .errornote {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(252, 165, 165, 0.4);
+        color: #fecaca;
+        border-radius: 10px;
+        margin: 0 22px 16px;
+    }
+
+    .login-meta {
+        margin-top: 12px;
+        text-align: center;
+        color: #bfdbfe;
+        font-size: 12px;
+    }
+
+    @media (max-width: 640px) {
+        #content {
+            max-width: calc(100% - 24px);
+        }
+
+        .login-title {
+            font-size: 28px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block nav-sidebar %}{% endblock %}
+
+{% block content %}
+<div class="login-card">
+    <div class="login-head">
+        <div class="login-title">TIME TRAVEL & TOUR</div>
+        <div class="login-sub">Admin login portal</div>
+    </div>
+
+    {% if form.errors and not form.non_field_errors %}
+        <p class="errornote">{% translate "Please correct the error below." %}</p>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <p class="errornote">{{ error }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <div id="content-main">
+        <form action="{{ app_path }}" method="post" id="login-form">
+            {% csrf_token %}
+            <div class="form-row">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+            </div>
+            <div class="form-row">
+                {{ form.password.label_tag }}
+                {{ form.password }}
+                <input type="hidden" name="next" value="{{ next }}">
+            </div>
+            <div class="submit-row">
+                <input type="submit" value="{% translate 'Log in' %}">
+            </div>
+        </form>
+    </div>
+</div>
+<div class="login-meta">Secure access for authorized staff only</div>
+{% endblock %}

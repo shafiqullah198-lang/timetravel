@@ -1,0 +1,187 @@
+{% extends "erp/base.html" %}
+{% block title %}Dashboard | Travel ERP{% endblock %}
+{% block page_title %}Financial Dashboard{% endblock %}
+{% block page_subtitle %}Sales, profit, receivables and supplier payables{% endblock %}
+
+{% block content %}
+<style>
+    .metric-card {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(155deg, rgba(22, 12, 43, 0.88), rgba(34, 16, 62, 0.78));
+        border: 1px solid rgba(168, 85, 247, 0.26);
+        border-radius: 16px;
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.36);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .metric-card::after {
+        content: "";
+        position: absolute;
+        top: -28px;
+        right: -28px;
+        width: 90px;
+        height: 90px;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(217,70,239,0.25), rgba(168,85,247,0.03));
+    }
+
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 34px rgba(168, 85, 247, 0.25);
+    }
+
+    .metric-label {
+        color: #d8b4fe;
+        font-size: 12px;
+        letter-spacing: .2px;
+    }
+
+    .metric-value {
+        color: #f8f4ff;
+        font-weight: 700;
+    }
+
+    .chart-card {
+        background: linear-gradient(160deg, rgba(16, 9, 33, 0.90), rgba(28, 13, 52, 0.86));
+        border: 1px solid rgba(168, 85, 247, 0.28);
+        border-radius: 16px;
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4);
+    }
+
+    .chart-title {
+        color: #f8f4ff;
+        font-weight: 700;
+    }
+</style>
+
+<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
+    <a href="{% url 'ticket_list' %}" class="metric-card p-4">
+        <div class="metric-label">Today Sales</div>
+        <div class="metric-value text-3xl mt-1">PKR {{ today_sales }}</div>
+    </a>
+    <a href="{% url 'ticket_list' %}" class="metric-card p-4">
+        <div class="metric-label">Today Profit</div>
+        <div class="metric-value text-3xl mt-1">PKR {{ today_profit }}</div>
+    </a>
+    <a href="{% url 'customer_udar' %}" class="metric-card p-4">
+        <div class="metric-label">Total Customer Udar</div>
+        <div class="metric-value text-3xl mt-1">PKR {{ total_udar }}</div>
+    </a>
+    <a href="{% url 'supplier_payable' %}" class="metric-card p-4">
+        <div class="metric-label">Total Supplier Payable</div>
+        <div class="metric-value text-3xl mt-1">PKR {{ total_supplier_payable }}</div>
+    </a>
+    <div class="metric-card p-4">
+        <div class="metric-label">Monthly Profit</div>
+        <div class="metric-value text-3xl mt-1">PKR {{ monthly_profit }}</div>
+    </div>
+</section>
+
+<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+    <div class="metric-card p-4">
+        <div class="metric-label">Monthly Sales</div>
+        <div class="metric-value text-2xl mt-1">PKR {{ monthly_sales }}</div>
+    </div>
+    <div class="metric-card p-4">
+        <div class="metric-label">Overdue Customers</div>
+        <div class="metric-value text-2xl mt-1">{{ overdue_customers }}</div>
+    </div>
+    <div class="metric-card p-4">
+        <div class="metric-label">Partial Customer Payments</div>
+        <div class="metric-value text-2xl mt-1">{{ partial_customers }}</div>
+    </div>
+    <div class="metric-card p-4">
+        <div class="metric-label">Paid to Suppliers</div>
+        <div class="metric-value text-2xl mt-1">PKR {{ supplier_paid_total }}</div>
+    </div>
+</section>
+
+<section class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+    <div class="chart-card p-4">
+        <h3 class="chart-title mb-3">Daily Sales (10 Days)</h3>
+        <div class="h-72">
+            <canvas id="salesChart"></canvas>
+        </div>
+    </div>
+    <div class="chart-card p-4">
+        <h3 class="chart-title mb-3">Monthly Profit (6 Months)</h3>
+        <div class="h-72">
+            <canvas id="profitChart"></canvas>
+        </div>
+    </div>
+    <div class="chart-card p-4">
+        <h3 class="chart-title mb-3">Customer Payment Status</h3>
+        <div class="h-72">
+            <canvas id="customerChart"></canvas>
+        </div>
+    </div>
+    <div class="chart-card p-4">
+        <h3 class="chart-title mb-3">Supplier Payable vs Paid</h3>
+        <div class="h-72">
+            <canvas id="supplierChart"></canvas>
+        </div>
+    </div>
+</section>
+
+<script>
+fetch("{% url 'dashboard_charts_api' %}")
+  .then((r) => r.json())
+  .then((data) => {
+    const dailySales = data.daily_sales.map((x) => Number(x.value) || 0);
+    const monthlyProfit = data.monthly_profit.map((x) => Number(x.value) || 0);
+
+    new Chart(document.getElementById("salesChart"), {
+      type: "bar",
+      data: {
+        labels: data.daily_sales.map((x) => x.label),
+        datasets: [{ label: "Sales", data: dailySales, backgroundColor: "#a855f7", borderRadius: 8, maxBarThickness: 28 }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: "#e9d5ff" } } },
+        scales: {
+            x: { ticks: { color: "#ddd6fe" }, grid: { color: "rgba(168,85,247,0.20)" } },
+            y: { beginAtZero: true, ticks: { color: "#ddd6fe" }, grid: { color: "rgba(168,85,247,0.20)" } },
+        },
+      },
+    });
+
+    new Chart(document.getElementById("profitChart"), {
+      type: "bar",
+      data: {
+        labels: data.monthly_profit.map((x) => x.label),
+        datasets: [{ label: "Profit", data: monthlyProfit, backgroundColor: "#d946ef", borderRadius: 8, maxBarThickness: 28 }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: "#e9d5ff" } } },
+        scales: {
+            x: { ticks: { color: "#ddd6fe" }, grid: { color: "rgba(168,85,247,0.20)" } },
+            y: { beginAtZero: true, ticks: { color: "#ddd6fe" }, grid: { color: "rgba(168,85,247,0.20)" } },
+        },
+      },
+    });
+
+    new Chart(document.getElementById("customerChart"), {
+      type: "pie",
+      data: {
+        labels: data.customer_status.map((x) => x.label),
+        datasets: [{ data: data.customer_status.map((x) => x.value), backgroundColor: ["#22c55e", "#f59e0b", "#fb7185"] }],
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#e9d5ff" } } } },
+    });
+
+    new Chart(document.getElementById("supplierChart"), {
+      type: "doughnut",
+      data: {
+        labels: data.supplier_status.map((x) => x.label),
+        datasets: [{ data: data.supplier_status.map((x) => x.value), backgroundColor: ["#c084fc", "#2dd4bf"] }],
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#e9d5ff" } } } },
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,366 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Travel ERP{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-start: #0a0519;
+            --bg-end: #1d0f3a;
+            --panel: rgba(18, 12, 36, 0.86);
+            --panel-border: rgba(166, 117, 255, 0.30);
+            --ink: #f3edff;
+            --muted: #b8a8d8;
+            --primary: #a855f7;
+            --primary-2: #d946ef;
+            --sidebar-1: #060212;
+            --sidebar-2: #140728;
+        }
+
+        body {
+            font-family: "Poppins", "Segoe UI", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(1200px 500px at 92% -8%, rgba(217, 70, 239, 0.25), transparent 60%),
+                radial-gradient(900px 380px at -8% 108%, rgba(168, 85, 247, 0.24), transparent 55%),
+                linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url("/static/images/logo.png?v=20260223");
+            background-repeat: no-repeat;
+            background-position: center 58%;
+            background-size: min(72vw, 980px);
+            opacity: 0.24;
+            pointer-events: none;
+            z-index: 0;
+            filter: saturate(1.05);
+        }
+
+        .min-h-screen.flex {
+            position: relative;
+            z-index: 1;
+        }
+
+        .erp-sidebar {
+            background: linear-gradient(180deg, var(--sidebar-2), var(--sidebar-1));
+            border-right: 1px solid rgba(168, 85, 247, 0.20);
+            box-shadow: 18px 0 42px rgba(0, 0, 0, 0.5);
+        }
+
+        .erp-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(168, 85, 247, 0.28);
+            background: linear-gradient(145deg, rgba(168, 85, 247, 0.16), rgba(20, 10, 36, 0.30));
+        }
+
+        .logo-shell {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            padding: 3px;
+            background: linear-gradient(145deg, #f0abfc, #fdf4ff);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+            flex-shrink: 0;
+        }
+
+        .logo-shell img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.10);
+            filter: saturate(1.1) contrast(1.06);
+        }
+
+        .sidebar-title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            line-height: 1.2;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: #ddd6fe;
+            transition: all .2s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: rgba(168, 85, 247, 0.22);
+            border-color: rgba(192, 132, 252, 0.45);
+            transform: translateX(2px);
+        }
+
+        .nav-link.active {
+            color: #ffffff;
+            background: linear-gradient(90deg, rgba(168, 85, 247, 0.48), rgba(217, 70, 239, 0.30));
+            border-color: rgba(216, 180, 254, 0.45);
+        }
+
+        .brand-strip {
+            border-radius: 16px;
+            padding: 14px 18px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border: 1px solid rgba(216, 180, 254, 0.35);
+            background: linear-gradient(105deg, rgba(88, 28, 135, 0.96) 0%, rgba(109, 40, 217, 0.95) 55%, rgba(217, 70, 239, 0.92) 100%);
+            box-shadow: 0 16px 40px rgba(147, 51, 234, 0.38);
+        }
+
+        .brand-strip .logo-shell {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(145deg, #f5d0fe, #ffffff);
+        }
+
+        .erp-header {
+            background: rgba(12, 8, 28, 0.85);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .erp-header h1 {
+            color: #f8f4ff;
+        }
+
+        .erp-header p {
+            color: #c4b5fd !important;
+        }
+
+        .public-btn {
+            border-radius: 10px;
+            background: linear-gradient(140deg, rgba(76, 29, 149, 0.94), rgba(107, 33, 168, 0.96));
+            border: 1px solid rgba(216, 180, 254, 0.35);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .public-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 16px rgba(168, 85, 247, 0.4);
+        }
+
+        .logout-btn {
+            border-radius: 10px;
+            color: #f8f4ff;
+            background: linear-gradient(130deg, #6d28d9, #a21caf);
+            border: 1px solid rgba(216, 180, 254, 0.40);
+            box-shadow: 0 12px 24px rgba(147, 51, 234, 0.35);
+        }
+
+        .erp-message-ok {
+            background: rgba(16, 185, 129, 0.16);
+            color: #bbf7d0;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .erp-message-err {
+            background: rgba(239, 68, 68, 0.16);
+            color: #fecaca;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+        }
+
+        .erp-table-wrap {
+            background: linear-gradient(160deg, rgba(16, 9, 33, 0.90), rgba(28, 13, 52, 0.86));
+            border: 1px solid rgba(168, 85, 247, 0.28);
+            border-radius: 16px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.40);
+            overflow: hidden;
+        }
+
+        .erp-table {
+            color: #f5ecff;
+        }
+
+        .erp-table thead {
+            background: rgba(168, 85, 247, 0.18);
+        }
+
+        .erp-table th {
+            color: #e9d5ff;
+            font-weight: 600;
+        }
+
+        .erp-table tr {
+            border-top: 1px solid rgba(168, 85, 247, 0.20);
+        }
+
+        .erp-table tbody td {
+            color: #f5ecff;
+        }
+
+        .erp-table-muted {
+            color: #d8b4fe !important;
+        }
+
+        .erp-table-profit {
+            color: #34d399 !important;
+            font-weight: 700;
+        }
+
+        .erp-table-debit {
+            color: #fbbf24 !important;
+            font-weight: 700;
+        }
+
+        .erp-table-credit {
+            color: #34d399 !important;
+            font-weight: 700;
+        }
+
+        .erp-panel {
+            background: linear-gradient(160deg, rgba(16, 9, 33, 0.90), rgba(28, 13, 52, 0.86));
+            border: 1px solid rgba(168, 85, 247, 0.28);
+            border-radius: 16px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.36);
+        }
+
+        .erp-stat-label {
+            color: #c4b5fd;
+            font-size: 12px;
+            letter-spacing: 0.2px;
+        }
+
+        .erp-stat-value {
+            color: #f8f4ff;
+            font-weight: 700;
+        }
+
+        .erp-label {
+            color: #ddd6fe;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .erp-input {
+            height: 44px;
+            background: rgba(35, 21, 63, 0.78);
+            border: 1px solid rgba(168, 85, 247, 0.36);
+            border-radius: 10px;
+            color: #f8f4ff;
+        }
+
+        .erp-input::placeholder {
+            color: #bfa8e8;
+        }
+
+        .erp-input:focus {
+            outline: none;
+            border-color: rgba(216, 180, 254, 0.8);
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.22);
+        }
+
+        .erp-btn-primary {
+            color: #fff;
+            border-radius: 10px;
+            background: linear-gradient(130deg, #6d28d9, #a21caf);
+            border: 1px solid rgba(216, 180, 254, 0.40);
+            box-shadow: 0 12px 24px rgba(147, 51, 234, 0.32);
+        }
+
+        .erp-btn-primary:hover {
+            filter: brightness(1.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="min-h-screen flex">
+        <aside class="erp-sidebar w-72 text-slate-100 p-5 hidden lg:block">
+            <div class="mb-8">
+                <a href="{% url 'dashboard_home' %}" class="erp-brand">
+                    <div class="logo-shell">
+                        <img src="{% static 'images/logo.png' %}?v=20260223" alt="Time Travel & Tour">
+                    </div>
+                    <div class="sidebar-title">TIME TRAVEL &amp; TOUR</div>
+                </a>
+            </div>
+            <nav class="space-y-2 text-sm">
+                <a href="{% url 'dashboard_home' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard_home' %}active{% endif %}">Dashboard</a>
+                <a href="{% url 'ticket_list' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_list' %}active{% endif %}">Ticket Records</a>
+                <a href="{% url 'ticket_create' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_create' %}active{% endif %}">Add Ticket</a>
+                <a href="{% url 'customer_udar' %}" class="nav-link {% if request.resolver_match.url_name == 'customer_udar' %}active{% endif %}">Customer Udar</a>
+                <a href="{% url 'supplier_payable' %}" class="nav-link {% if request.resolver_match.url_name == 'supplier_payable' %}active{% endif %}">Supplier Payables</a>
+                <a href="{% url 'expense_page' %}" class="nav-link {% if request.resolver_match.url_name == 'expense_page' %}active{% endif %}">Expenses</a>
+                <a href="{% url 'export_customer_ledger_pdf' %}" class="nav-link">Customer Report (PDF)</a>
+                <a href="{% url 'export_supplier_ledger_pdf' %}" class="nav-link">Supplier Report (PDF)</a>
+            </nav>
+            <div class="mt-10 text-xs text-violet-200/80">
+                Logged in as <span class="font-semibold text-white">{{ request.user.username }}</span>
+            </div>
+            <a href="{% url 'erp_logout' %}" class="logout-btn mt-4 inline-block text-sm px-3 py-2">Logout</a>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-8">
+            <div class="brand-strip mb-4">
+                <div class="logo-shell">
+                    <img src="{% static 'images/logo.png' %}?v=20260223" alt="Time Travel & Tour">
+                </div>
+                <div class="text-xl md:text-3xl font-bold tracking-wide">TIME TRAVEL &amp; TOUR</div>
+            </div>
+            <header class="erp-header px-5 py-4 mb-6 flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-semibold">{% block page_title %}ERP Dashboard{% endblock %}</h1>
+                    <p class="text-sm text-slate-500">{% block page_subtitle %}Financial and booking control center{% endblock %}</p>
+                </div>
+                <a href="{% url 'public_home' %}" class="public-btn px-4 py-2 text-white text-sm">Public Website</a>
+            </header>
+
+            {% if messages %}
+            <div class="space-y-2 mb-4">
+                {% for message in messages %}
+                <div class="p-3 rounded-lg text-sm {% if message.tags == 'error' %}erp-message-err{% else %}erp-message-ok{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    <script>
+        (function() {
+            const forms = document.querySelectorAll("form.js-live-search");
+            forms.forEach(function(form) {
+                const input = form.querySelector('input[name="q"]');
+                if (!input) return;
+
+                let timer = null;
+                const delay = Number(form.dataset.delay || 350);
+                form.dataset.lastQuery = (input.value || "").trim();
+
+                input.addEventListener("input", function() {
+                    window.clearTimeout(timer);
+                    timer = window.setTimeout(function() {
+                        const current = (input.value || "").trim();
+                        if (current === form.dataset.lastQuery) return;
+                        form.dataset.lastQuery = current;
+                        form.submit();
+                    }, delay);
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+
+<h2>Payment Page</h2>
+<p>Booking PNR: {{ booking.pnr }}</p>
+<p>Amount: {{ booking.price }}</p>
+
+<form action="/confirm-payment/{{ booking.id }}/" method="POST">
+    {% csrf_token %}
+    <button type="submit">Simulate Payment Success</button>
+</form>

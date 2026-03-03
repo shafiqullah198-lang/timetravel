@@ -1,0 +1,72 @@
+{% extends "erp/base.html" %}
+{% block title %}Supplier Payables | Travel ERP{% endblock %}
+{% block page_title %}Supplier Payables{% endblock %}
+{% block page_subtitle %}Track liabilities against vendor companies{% endblock %}
+
+{% block content %}
+<div class="flex justify-end mb-4">
+    <a href="{% url 'supplier_create' %}" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium">Add Supplier</a>
+</div>
+
+<form method="get" class="erp-panel p-4 mb-4 js-live-search" data-delay="350">
+    <div class="flex flex-col md:flex-row gap-3">
+        <input
+            type="text"
+            name="q"
+            value="{{ q|default:'' }}"
+            class="erp-input w-full px-3"
+            placeholder="Search supplier by name or contact number"
+        >
+        <div class="flex gap-2">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white rounded-lg px-4 py-2 text-sm">Search</button>
+            <a href="{% url 'supplier_payable' %}" class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm">Clear</a>
+        </div>
+    </div>
+</form>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+    <div class="erp-panel p-4">
+        <div class="erp-stat-label">Total Supplier Payable</div>
+        <div class="text-2xl font-bold erp-stat-value">PKR {{ total_payable }}</div>
+    </div>
+    <div class="erp-panel p-4">
+        <div class="erp-stat-label">Total Paid to Suppliers</div>
+        <div class="text-2xl font-bold erp-stat-value">PKR {{ total_paid }}</div>
+    </div>
+</div>
+
+<div class="erp-table-wrap">
+    <table class="w-full text-sm">
+        <thead class="erp-table">
+            <tr>
+                <th class="text-left p-3">Supplier</th>
+                <th class="text-left p-3">Phone</th>
+                <th class="text-right p-3">Total Payable</th>
+                <th class="text-right p-3">Paid</th>
+                <th class="text-right p-3">Remaining</th>
+                <th class="text-right p-3">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="erp-table">
+            {% for s in suppliers %}
+            <tr>
+                <td class="p-3 font-medium">{{ s.company_name }}</td>
+                <td class="p-3">{{ s.phone }}</td>
+                <td class="p-3 text-right">{{ s.total_payable }}</td>
+                <td class="p-3 text-right">{{ s.total_paid }}</td>
+                <td class="p-3 text-right erp-table-debit">{{ s.remaining_payable }}</td>
+                <td class="p-3 text-right">
+                    <div class="flex items-center justify-end gap-3">
+                        <a href="{% url 'supplier_ledger' s.id %}" class="text-blue-300 hover:underline">Open Ledger</a>
+                        <a href="{% url 'supplier_record_pdf' s.id %}" class="text-indigo-300 hover:underline">PDF</a>
+                        <a href="{% url 'send_supplier_record' s.id %}" class="text-emerald-300 hover:underline">Send PDF</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="p-5 text-center erp-table-muted">No outstanding supplier payables.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
