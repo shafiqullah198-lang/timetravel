@@ -285,10 +285,6 @@
             filter: brightness(1.05);
         }
 
-        .mobile-shell {
-            display: none;
-        }
-
         .mobile-topbar {
             display: flex;
             align-items: center;
@@ -344,21 +340,8 @@
         }
 
         @media (max-width: 640px) {
-            .mobile-shell {
-                display: block;
-            }
-
-            .erp-sidebar {
-                display: none;
-            }
-
             .brand-strip {
                 display: none;
-            }
-
-            .brand-strip {
-                flex-direction: column;
-                align-items: flex-start;
             }
 
             .brand-strip .logo-shell {
@@ -380,20 +363,6 @@
 </head>
 <body class="min-h-screen">
     <div class="min-h-screen flex">
-        <div class="mobile-shell lg:hidden">
-            <div class="mobile-topbar">
-                <button class="mobile-menu-btn" type="button" aria-label="Open menu" data-mobile-menu>
-                    ☰
-                </button>
-                <div class="flex items-center gap-3">
-                    <div class="logo-shell" style="width:40px;height:40px;">
-                        <img src="{% static 'images/logo.png' %}?v=20260223" alt="Time Travel & Tour">
-                    </div>
-                    <div class="text-base font-semibold">TIME TRAVEL &amp; TOUR</div>
-                </div>
-            </div>
-        </div>
-
         <div class="mobile-overlay lg:hidden" data-mobile-overlay></div>
         <aside class="erp-sidebar mobile-drawer lg:hidden p-5" data-mobile-drawer>
             <div class="mb-8 flex items-center justify-between">
@@ -421,7 +390,7 @@
             <a href="{% url 'erp_logout' %}" class="logout-btn mt-4 inline-block text-sm px-3 py-2">Logout</a>
         </aside>
 
-        <aside class="erp-sidebar w-72 text-slate-100 p-5 hidden lg:block">
+        <aside class="erp-sidebar erp-sidebar-desktop w-72 text-slate-100 p-5 hidden lg:block">
             <div class="mb-8">
                 <a href="{% url 'dashboard_home' %}" class="erp-brand">
                     <div class="logo-shell">
@@ -447,6 +416,17 @@
         </aside>
 
         <main class="flex-1 p-4 md:p-8">
+            <div class="mobile-topbar lg:hidden">
+                <button class="mobile-menu-btn" type="button" aria-label="Open menu" data-mobile-menu>
+                    ☰
+                </button>
+                <div class="flex items-center gap-3">
+                    <div class="logo-shell" style="width:40px;height:40px;">
+                        <img src="{% static 'images/logo.png' %}?v=20260223" alt="Time Travel & Tour">
+                    </div>
+                    <div class="text-base font-semibold">TIME TRAVEL &amp; TOUR</div>
+                </div>
+            </div>
             <div class="brand-strip mb-4">
                 <div class="logo-shell">
                     <img src="{% static 'images/logo.png' %}?v=20260223" alt="Time Travel & Tour">
