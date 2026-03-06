@@ -9,24 +9,24 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-start: #0a0519;
-            --bg-end: #1d0f3a;
-            --panel: rgba(18, 12, 36, 0.86);
-            --panel-border: rgba(166, 117, 255, 0.30);
-            --ink: #f3edff;
-            --muted: #b8a8d8;
-            --primary: #a855f7;
-            --primary-2: #d946ef;
-            --sidebar-1: #060212;
-            --sidebar-2: #140728;
+            --bg-start: #f6f8fc;
+            --bg-end: #eef2f7;
+            --panel: #ffffff;
+            --panel-border: #e2e8f0;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --primary: #2563eb;
+            --primary-2: #0ea5e9;
+            --sidebar-1: #f8fafc;
+            --sidebar-2: #ffffff;
         }
 
         body {
             font-family: "Poppins", "Segoe UI", sans-serif;
             color: var(--ink);
             background:
-                radial-gradient(1200px 500px at 92% -8%, rgba(217, 70, 239, 0.25), transparent 60%),
-                radial-gradient(900px 380px at -8% 108%, rgba(168, 85, 247, 0.24), transparent 55%),
+                radial-gradient(900px 420px at 92% -8%, rgba(37, 99, 235, 0.12), transparent 60%),
+                radial-gradient(760px 340px at -8% 108%, rgba(14, 165, 233, 0.12), transparent 55%),
                 linear-gradient(135deg, var(--bg-start), var(--bg-end));
             position: relative;
             overflow-x: hidden;
@@ -40,10 +40,10 @@
             background-repeat: no-repeat;
             background-position: center 58%;
             background-size: min(72vw, 980px);
-            opacity: 0.24;
+            opacity: 0.06;
             pointer-events: none;
             z-index: 0;
-            filter: saturate(1.05);
+            filter: saturate(1.02);
         }
 
         .min-h-screen.flex {
@@ -53,8 +53,8 @@
 
         .erp-sidebar {
             background: linear-gradient(180deg, var(--sidebar-2), var(--sidebar-1));
-            border-right: 1px solid rgba(168, 85, 247, 0.20);
-            box-shadow: 18px 0 42px rgba(0, 0, 0, 0.5);
+            border-right: 1px solid #e2e8f0;
+            box-shadow: 10px 0 24px rgba(15, 23, 42, 0.08);
         }
 
         .erp-brand {
@@ -63,8 +63,9 @@
             gap: 12px;
             padding: 10px 12px;
             border-radius: 14px;
-            border: 1px solid rgba(168, 85, 247, 0.28);
-            background: linear-gradient(145deg, rgba(168, 85, 247, 0.16), rgba(20, 10, 36, 0.30));
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
         }
 
         .logo-shell {
@@ -72,8 +73,8 @@
             height: 48px;
             border-radius: 12px;
             padding: 3px;
-            background: linear-gradient(145deg, #f0abfc, #fdf4ff);
-            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+            background: linear-gradient(145deg, #dbeafe, #ffffff);
+            box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
             flex-shrink: 0;
         }
 
@@ -92,193 +93,202 @@
             font-weight: 700;
             letter-spacing: 0.2px;
             line-height: 1.2;
+            color: #0f172a;
         }
 
         .nav-link {
             display: block;
             padding: 10px 12px;
             border-radius: 10px;
-            color: #ddd6fe;
+            color: #475569;
             transition: all .2s ease;
             border: 1px solid transparent;
         }
 
         .nav-link:hover {
-            background: rgba(168, 85, 247, 0.22);
-            border-color: rgba(192, 132, 252, 0.45);
+            background: rgba(37, 99, 235, 0.08);
+            border-color: rgba(37, 99, 235, 0.25);
+            color: #1e3a8a;
             transform: translateX(2px);
         }
 
         .nav-link.active {
             color: #ffffff;
-            background: linear-gradient(90deg, rgba(168, 85, 247, 0.48), rgba(217, 70, 239, 0.30));
-            border-color: rgba(216, 180, 254, 0.45);
+            background: linear-gradient(90deg, #2563eb, #1d4ed8);
+            border-color: rgba(37, 99, 235, 0.45);
+            box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
         }
 
-        .brand-strip {
+        .appbar {
             border-radius: 16px;
             padding: 14px 18px;
-            color: #ffffff;
+            color: #0f172a;
             display: flex;
             align-items: center;
             gap: 14px;
-            border: 1px solid rgba(216, 180, 254, 0.35);
-            background: linear-gradient(105deg, rgba(88, 28, 135, 0.96) 0%, rgba(109, 40, 217, 0.95) 55%, rgba(217, 70, 239, 0.92) 100%);
-            box-shadow: 0 16px 40px rgba(147, 51, 234, 0.38);
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            box-shadow: 0 16px 32px rgba(15, 23, 42, 0.10);
         }
 
-        .brand-strip .logo-shell {
+        .appbar .logo-shell {
             width: 56px;
             height: 56px;
             border-radius: 14px;
-            background: linear-gradient(145deg, #f5d0fe, #ffffff);
+            background: linear-gradient(145deg, #dbeafe, #ffffff);
+        }
+
+        .appbar-title {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
         }
 
         .erp-header {
-            background: rgba(12, 8, 28, 0.85);
+            background: #ffffff;
             border: 1px solid var(--panel-border);
             border-radius: 16px;
-            backdrop-filter: blur(4px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+            backdrop-filter: none;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
             flex-wrap: wrap;
         }
 
         .erp-header h1 {
-            color: #f8f4ff;
+            color: #0f172a;
         }
 
         .erp-header p {
-            color: #c4b5fd !important;
+            color: #64748b !important;
         }
 
         .public-btn {
             border-radius: 10px;
-            background: linear-gradient(140deg, rgba(76, 29, 149, 0.94), rgba(107, 33, 168, 0.96));
-            border: 1px solid rgba(216, 180, 254, 0.35);
+            background: linear-gradient(140deg, #2563eb, #1d4ed8);
+            border: 1px solid rgba(37, 99, 235, 0.35);
             transition: transform .2s ease, box-shadow .2s ease;
         }
 
         .public-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 10px 16px rgba(168, 85, 247, 0.4);
+            box-shadow: 0 10px 16px rgba(37, 99, 235, 0.25);
         }
 
         .logout-btn {
             border-radius: 10px;
-            color: #f8f4ff;
-            background: linear-gradient(130deg, #6d28d9, #a21caf);
-            border: 1px solid rgba(216, 180, 254, 0.40);
-            box-shadow: 0 12px 24px rgba(147, 51, 234, 0.35);
+            color: #ffffff;
+            background: linear-gradient(130deg, #0ea5e9, #2563eb);
+            border: 1px solid rgba(37, 99, 235, 0.40);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.25);
         }
 
         .erp-message-ok {
-            background: rgba(16, 185, 129, 0.16);
-            color: #bbf7d0;
+            background: rgba(16, 185, 129, 0.12);
+            color: #166534;
             border: 1px solid rgba(16, 185, 129, 0.35);
         }
 
         .erp-message-err {
-            background: rgba(239, 68, 68, 0.16);
-            color: #fecaca;
+            background: rgba(239, 68, 68, 0.12);
+            color: #7f1d1d;
             border: 1px solid rgba(239, 68, 68, 0.35);
         }
 
         .erp-table-wrap {
-            background: linear-gradient(160deg, rgba(16, 9, 33, 0.90), rgba(28, 13, 52, 0.86));
-            border: 1px solid rgba(168, 85, 247, 0.28);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 16px;
-            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.40);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
             overflow: hidden;
         }
 
         .erp-table {
-            color: #f5ecff;
+            color: #0f172a;
         }
 
         .erp-table thead {
-            background: rgba(168, 85, 247, 0.18);
+            background: #f1f5f9;
         }
 
         .erp-table th {
-            color: #e9d5ff;
+            color: #334155;
             font-weight: 600;
         }
 
         .erp-table tr {
-            border-top: 1px solid rgba(168, 85, 247, 0.20);
+            border-top: 1px solid #e2e8f0;
         }
 
         .erp-table tbody td {
-            color: #f5ecff;
+            color: #0f172a;
         }
 
         .erp-table-muted {
-            color: #d8b4fe !important;
+            color: #94a3b8 !important;
         }
 
         .erp-table-profit {
-            color: #34d399 !important;
+            color: #16a34a !important;
             font-weight: 700;
         }
 
         .erp-table-debit {
-            color: #fbbf24 !important;
+            color: #d97706 !important;
             font-weight: 700;
         }
 
         .erp-table-credit {
-            color: #34d399 !important;
+            color: #16a34a !important;
             font-weight: 700;
         }
 
         .erp-panel {
-            background: linear-gradient(160deg, rgba(16, 9, 33, 0.90), rgba(28, 13, 52, 0.86));
-            border: 1px solid rgba(168, 85, 247, 0.28);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 16px;
-            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.36);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
         }
 
         .erp-stat-label {
-            color: #c4b5fd;
+            color: #64748b;
             font-size: 12px;
             letter-spacing: 0.2px;
         }
 
         .erp-stat-value {
-            color: #f8f4ff;
+            color: #0f172a;
             font-weight: 700;
         }
 
         .erp-label {
-            color: #ddd6fe;
+            color: #475569;
             font-size: 13px;
             font-weight: 500;
         }
 
         .erp-input {
             height: 44px;
-            background: rgba(35, 21, 63, 0.78);
-            border: 1px solid rgba(168, 85, 247, 0.36);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 10px;
-            color: #f8f4ff;
+            color: #0f172a;
         }
 
         .erp-input::placeholder {
-            color: #bfa8e8;
+            color: #94a3b8;
         }
 
         .erp-input:focus {
             outline: none;
-            border-color: rgba(216, 180, 254, 0.8);
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.22);
+            border-color: rgba(37, 99, 235, 0.6);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
         .erp-btn-primary {
             color: #fff;
             border-radius: 10px;
-            background: linear-gradient(130deg, #6d28d9, #a21caf);
-            border: 1px solid rgba(216, 180, 254, 0.40);
-            box-shadow: 0 12px 24px rgba(147, 51, 234, 0.32);
+            background: linear-gradient(130deg, #2563eb, #1d4ed8);
+            border: 1px solid rgba(37, 99, 235, 0.35);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.25);
         }
 
         .erp-btn-primary:hover {
@@ -293,17 +303,17 @@
             padding: 10px 14px;
             margin-bottom: 12px;
             border-radius: 14px;
-            background: rgba(12, 8, 28, 0.78);
+            background: #ffffff;
             border: 1px solid var(--panel-border);
-            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
         }
 
         .mobile-menu-btn {
             width: 40px;
             height: 40px;
             border-radius: 10px;
-            border: 1px solid rgba(216, 180, 254, 0.4);
-            background: linear-gradient(130deg, #6d28d9, #a21caf);
+            border: 1px solid rgba(37, 99, 235, 0.35);
+            background: linear-gradient(130deg, #2563eb, #1d4ed8);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -327,7 +337,7 @@
         .mobile-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(5, 3, 12, 0.6);
+            background: rgba(15, 23, 42, 0.35);
             opacity: 0;
             pointer-events: none;
             transition: opacity .2s ease;
@@ -339,12 +349,17 @@
             pointer-events: auto;
         }
 
+        .content-shell {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
         @media (max-width: 640px) {
-            .brand-strip {
+            .appbar {
                 display: none;
             }
 
-            .brand-strip .logo-shell {
+            .appbar .logo-shell {
                 width: 52px;
                 height: 52px;
             }
@@ -384,13 +399,13 @@
                 <a href="{% url 'export_customer_ledger_pdf' %}" class="nav-link">Customer Report (PDF)</a>
                 <a href="{% url 'export_supplier_ledger_pdf' %}" class="nav-link">Supplier Report (PDF)</a>
             </nav>
-            <div class="mt-10 text-xs text-violet-200/80">
-                Logged in as <span class="font-semibold text-white">{{ request.user.username }}</span>
+            <div class="mt-10 text-xs text-slate-500">
+                Logged in as <span class="font-semibold text-slate-900">{{ request.user.username }}</span>
             </div>
             <a href="{% url 'erp_logout' %}" class="logout-btn mt-4 inline-block text-sm px-3 py-2">Logout</a>
         </aside>
 
-        <aside class="erp-sidebar erp-sidebar-desktop w-72 text-slate-100 p-5 hidden lg:block">
+        <aside class="erp-sidebar erp-sidebar-desktop w-64 text-slate-700 p-5 hidden lg:block">
             <div class="mb-8">
                 <a href="{% url 'dashboard_home' %}" class="erp-brand">
                     <div class="logo-shell">
@@ -409,13 +424,14 @@
                 <a href="{% url 'export_customer_ledger_pdf' %}" class="nav-link">Customer Report (PDF)</a>
                 <a href="{% url 'export_supplier_ledger_pdf' %}" class="nav-link">Supplier Report (PDF)</a>
             </nav>
-            <div class="mt-10 text-xs text-violet-200/80">
-                Logged in as <span class="font-semibold text-white">{{ request.user.username }}</span>
+            <div class="mt-10 text-xs text-slate-500">
+                Logged in as <span class="font-semibold text-slate-900">{{ request.user.username }}</span>
             </div>
             <a href="{% url 'erp_logout' %}" class="logout-btn mt-4 inline-block text-sm px-3 py-2">Logout</a>
         </aside>
 
-        <main class="flex-1 p-4 md:p-8">
+        <main class="flex-1 p-4 md:p-8 bg-slate-50">
+            <div class="content-shell">
             <div class="mobile-topbar lg:hidden">
                 <button class="mobile-menu-btn" type="button" aria-label="Open menu" data-mobile-menu>
                     ☰
@@ -427,11 +443,11 @@
                     <div class="text-base font-semibold">TIME TRAVEL &amp; TOUR</div>
                 </div>
             </div>
-            <div class="brand-strip mb-4">
+            <div class="appbar mb-5">
                 <div class="logo-shell">
                     <img src="{% static 'images/logo.png' %}?v=20260223" alt="Time Travel & Tour">
                 </div>
-                <div class="text-xl md:text-3xl font-bold tracking-wide">TIME TRAVEL &amp; TOUR</div>
+                <div class="appbar-title">TIME TRAVEL &amp; TOUR</div>
             </div>
             <header class="erp-header px-5 py-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
@@ -452,6 +468,7 @@
             {% endif %}
 
             {% block content %}{% endblock %}
+            </div>
         </main>
     </div>
     <script>

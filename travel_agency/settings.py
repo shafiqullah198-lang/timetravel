@@ -14,7 +14,7 @@ SECRET_KEY = 'replace-this-in-production'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['shafiqullah33.pythonanywhere.com']
+ALLOWED_HOSTS = ['shafiqullah33.pythonanywhere.com', '127.0.0.1', 'localhost']
 
 # -------------------------------------------------
 # APPLICATIONS

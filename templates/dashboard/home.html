@@ -8,10 +8,10 @@
     .metric-card {
         position: relative;
         overflow: hidden;
-        background: linear-gradient(155deg, rgba(22, 12, 43, 0.88), rgba(34, 16, 62, 0.78));
-        border: 1px solid rgba(168, 85, 247, 0.26);
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
         border-radius: 16px;
-        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.36);
+        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
         transition: transform .2s ease, box-shadow .2s ease;
     }
 
@@ -23,34 +23,39 @@
         width: 90px;
         height: 90px;
         border-radius: 999px;
-        background: radial-gradient(circle, rgba(217,70,239,0.25), rgba(168,85,247,0.03));
+        background: radial-gradient(circle, rgba(37,99,235,0.20), rgba(14,165,233,0.02));
     }
 
     .metric-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 20px 34px rgba(168, 85, 247, 0.25);
+        box-shadow: 0 20px 34px rgba(37, 99, 235, 0.18);
     }
 
     .metric-label {
-        color: #d8b4fe;
-        font-size: 12px;
-        letter-spacing: .2px;
+        color: #64748b;
+        font-size: 11px;
+        letter-spacing: .4px;
+        text-transform: uppercase;
     }
 
     .metric-value {
-        color: #f8f4ff;
+        color: #0f172a;
         font-weight: 700;
     }
 
+    .metric-card {
+        min-height: 98px;
+    }
+
     .chart-card {
-        background: linear-gradient(160deg, rgba(16, 9, 33, 0.90), rgba(28, 13, 52, 0.86));
-        border: 1px solid rgba(168, 85, 247, 0.28);
-        border-radius: 16px;
-        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4);
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
     }
 
     .chart-title {
-        color: #f8f4ff;
+        color: #0f172a;
         font-weight: 700;
     }
 </style>
@@ -135,15 +140,15 @@ fetch("{% url 'dashboard_charts_api' %}")
       type: "bar",
       data: {
         labels: data.daily_sales.map((x) => x.label),
-        datasets: [{ label: "Sales", data: dailySales, backgroundColor: "#a855f7", borderRadius: 8, maxBarThickness: 28 }],
+        datasets: [{ label: "Sales", data: dailySales, backgroundColor: "#2563eb", borderRadius: 8, maxBarThickness: 28 }],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: "#e9d5ff" } } },
+        plugins: { legend: { labels: { color: "#475569" } } },
         scales: {
-            x: { ticks: { color: "#ddd6fe" }, grid: { color: "rgba(168,85,247,0.20)" } },
-            y: { beginAtZero: true, ticks: { color: "#ddd6fe" }, grid: { color: "rgba(168,85,247,0.20)" } },
+            x: { ticks: { color: "#64748b" }, grid: { color: "rgba(148,163,184,0.35)" } },
+            y: { beginAtZero: true, ticks: { color: "#64748b" }, grid: { color: "rgba(148,163,184,0.35)" } },
         },
       },
     });
@@ -152,15 +157,15 @@ fetch("{% url 'dashboard_charts_api' %}")
       type: "bar",
       data: {
         labels: data.monthly_profit.map((x) => x.label),
-        datasets: [{ label: "Profit", data: monthlyProfit, backgroundColor: "#d946ef", borderRadius: 8, maxBarThickness: 28 }],
+        datasets: [{ label: "Profit", data: monthlyProfit, backgroundColor: "#0ea5e9", borderRadius: 8, maxBarThickness: 28 }],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: "#e9d5ff" } } },
+        plugins: { legend: { labels: { color: "#475569" } } },
         scales: {
-            x: { ticks: { color: "#ddd6fe" }, grid: { color: "rgba(168,85,247,0.20)" } },
-            y: { beginAtZero: true, ticks: { color: "#ddd6fe" }, grid: { color: "rgba(168,85,247,0.20)" } },
+            x: { ticks: { color: "#64748b" }, grid: { color: "rgba(148,163,184,0.35)" } },
+            y: { beginAtZero: true, ticks: { color: "#64748b" }, grid: { color: "rgba(148,163,184,0.35)" } },
         },
       },
     });
@@ -169,18 +174,18 @@ fetch("{% url 'dashboard_charts_api' %}")
       type: "pie",
       data: {
         labels: data.customer_status.map((x) => x.label),
-        datasets: [{ data: data.customer_status.map((x) => x.value), backgroundColor: ["#22c55e", "#f59e0b", "#fb7185"] }],
+        datasets: [{ data: data.customer_status.map((x) => x.value), backgroundColor: ["#22c55e", "#f59e0b", "#ef4444"] }],
       },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#e9d5ff" } } } },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#475569" } } } },
     });
 
     new Chart(document.getElementById("supplierChart"), {
       type: "doughnut",
       data: {
         labels: data.supplier_status.map((x) => x.label),
-        datasets: [{ data: data.supplier_status.map((x) => x.value), backgroundColor: ["#c084fc", "#2dd4bf"] }],
+        datasets: [{ data: data.supplier_status.map((x) => x.value), backgroundColor: ["#2563eb", "#22c55e"] }],
       },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#e9d5ff" } } } },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#475569" } } } },
     });
   });
 </script>
